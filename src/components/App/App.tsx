@@ -19,7 +19,6 @@ type State = {
 
 class App extends Component {
   state: State = {
-    // placeholder, dummy contacts
     contacts: [],
     filter: '',
   };
@@ -75,9 +74,9 @@ class App extends Component {
   getFilteredContacts = (contacts: Contact[]) => {
     const { filter } = this.state;
     return contacts.filter(
-      (c: Contact) =>
-        c.fullName.toLowerCase().includes(filter.toLowerCase()) ||
-        c.phoneNumber.includes(filter)
+      (contact: Contact) =>
+        contact.fullName.toLowerCase().includes(filter.toLowerCase()) ||
+        contact.phoneNumber.includes(filter)
     );
   };
 
