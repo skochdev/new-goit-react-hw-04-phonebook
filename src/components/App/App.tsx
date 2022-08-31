@@ -65,7 +65,7 @@ class App extends Component {
 
   handleDeleteContact = (id: string) => {
     this.setState((prevState: State) => ({
-      contacts: prevState.contacts.filter(c => c.id !== id),
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
     // resetting filter, so you don't stuck with blank contacts list when deleting while filter is used
     this.handleFilter('');
@@ -75,7 +75,7 @@ class App extends Component {
     const { filter } = this.state;
     return contacts.filter(
       (contact: Contact) =>
-        contact.fullName.toLowerCase().includes(filter.toLowerCase()) ||
+        contact?.fullName.toLowerCase().includes(filter.toLowerCase()) ||
         contact.phoneNumber.includes(filter)
     );
   };
