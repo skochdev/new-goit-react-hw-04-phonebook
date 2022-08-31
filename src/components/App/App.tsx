@@ -19,7 +19,13 @@ type State = {
 
 class App extends Component {
   state: State = {
-    contacts: [],
+    contacts: [
+      {
+        fullName: 'Dummy name',
+        phoneNumber: '+380665552232',
+        id: 'kjhsdj23u23soidfflskd',
+      },
+    ],
     filter: '',
   };
 
