@@ -5,3 +5,5 @@
 - localStorage
 - Formik
 - Yup validation
+- Styled components
+- Styled System
