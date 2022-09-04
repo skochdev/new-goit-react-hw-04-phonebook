@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as S from './App.styled';
 import { Box } from '../../utils/Box';
 import { AddNewContact } from '../AddNewContact/AddNewContact';
@@ -12,73 +12,57 @@ export type Contact = {
   id: string;
 };
 
-type State = {
-  contacts: Contact[];
-  filter: string;
-};
+export const App = () => {
+  const [contacts, setContacts] = useState(() => {
+    // reading from  local storage or setting the key
+    return JSON.parse(localStorage.getItem('contacts')!) ?? ([] as Contact[]);
+  });
+  const [filter, setFilter] = useState('');
 
-class App extends Component {
-  state: State = {
-    contacts: [
-      {
-        fullName: 'Dummy name',
-        phoneNumber: '+380665552232',
-        id: 'kjhsdj23u23soidfflskd',
-      },
-    ],
-    filter: '',
-  };
-
-  componentDidMount() {
+  useEffect(() => {
     const storedContacts = localStorage.getItem('contacts');
     if (storedContacts) {
-      const contacts = JSON.parse(storedContacts);
-      this.setState({ contacts });
+      const parsedContacts = JSON.parse(storedContacts);
+      setContacts(parsedContacts);
     }
-  }
+  }, []);
 
-  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<State>) {
-    if (this.state.contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
+  useEffect(() => {
+    window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-  handleAddNewContact = (newContact: Contact) => {
-    const isDuplicate = this.checkForDuplicate(newContact.fullName);
+  const handleAddNewContact = (newContact: Contact) => {
+    const isDuplicate = checkForDuplicate(newContact.fullName);
 
     if (!isDuplicate) {
-      this.setState((prevState: State) => ({
-        contacts: [...prevState.contacts, newContact],
-        filter: '',
-      }));
+      setContacts((s: Contact[]) => [...s, newContact]);
+      setFilter('');
     } else {
       alert(`${newContact.fullName} is already is your contact list`);
     }
   };
 
-  checkForDuplicate = (name: string) => {
-    let { contacts } = this.state;
+  const checkForDuplicate = (name: string) => {
     let normalizedNewName = name.toLowerCase();
 
     return contacts.some(
-      contact => contact.fullName.toLowerCase() === normalizedNewName
+      (contact: Contact) => contact.fullName.toLowerCase() === normalizedNewName
     );
   };
 
-  handleFilter = (filterValue: string) => {
-    this.setState({ filter: filterValue });
+  const handleFilter = (filterValue: string) => {
+    setFilter(filterValue);
   };
 
-  handleDeleteContact = (id: string) => {
-    this.setState((prevState: State) => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
-    // resetting filter, so you don't stuck with blank contacts list when deleting while filter is used
-    this.handleFilter('');
+  const handleDeleteContact = (id: string) => {
+    setContacts((s: Contact[]) =>
+      s.filter((contact: Contact) => contact.id !== id)
+    );
+
+    handleFilter('');
   };
 
-  getFilteredContacts = (contacts: Contact[]) => {
-    const { filter } = this.state;
+  const getFilteredContacts = (contacts: Contact[]) => {
     return contacts.filter(
       (contact: Contact) =>
         contact?.fullName.toLowerCase().includes(filter.toLowerCase()) ||
@@ -86,39 +70,28 @@ class App extends Component {
     );
   };
 
-  render() {
-    const {
-      handleAddNewContact,
-      handleFilter,
-      handleDeleteContact,
-      getFilteredContacts,
-    } = this;
-    const { contacts, filter } = this.state;
-    const filteredContacts = getFilteredContacts(contacts);
+  const filteredContacts = getFilteredContacts(contacts);
 
-    return (
-      <Box as="main" mx={4}>
-        <Box as="section" my={5} maxWidth="600px" mx="auto">
-          <Box as="h1" textAlign="center">
-            Phonebook
-          </Box>
-          <AddNewContact onAddNewContact={handleAddNewContact} />
-          <Box my={5} mx={4}>
-            <Filter onFilterChange={handleFilter} filterValue={filter} />
-          </Box>
-          <Box my={5} textAlign="center">
-            <ContactList
-              contacts={filteredContacts}
-              onDeleteContactClick={handleDeleteContact}
-            />
-          </Box>
-          <S.About as={Box} mt={5}>
-            <About />
-          </S.About>
+  return (
+    <Box as="main" mx={4}>
+      <Box as="section" my={5} maxWidth="600px" mx="auto">
+        <Box as="h1" textAlign="center">
+          Phonebook
         </Box>
+        <AddNewContact onAddNewContact={handleAddNewContact} />
+        <Box my={5} mx={4}>
+          <Filter onFilterChange={handleFilter} filterValue={filter} />
+        </Box>
+        <Box my={5} textAlign="center">
+          <ContactList
+            contacts={filteredContacts}
+            onDeleteContactClick={handleDeleteContact}
+          />
+        </Box>
+        <S.About as={Box} mt={5}>
+          <About />
+        </S.About>
       </Box>
-    );
-  }
-}
-
-export default App;
+    </Box>
+  );
+};

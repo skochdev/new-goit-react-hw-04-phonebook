@@ -20,8 +20,8 @@ let LoginSchema = yup.object().shape({
   phoneNumber: yup
     .string()
     .matches(
-      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
-      'Must start with +, should consist of numbers, dashes or spaces'
+      /^\+?[1-9][0-9]{7,14}$/,
+      'Must start with +, should consist of numbers, without letters, dashes or spaces'
     )
     .required('This field is required'),
 });
