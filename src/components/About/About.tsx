@@ -4,8 +4,8 @@ export const About = () => {
   return (
     <>
       <p>
-        This is a homework assignment. React class components, TypeScript.
-        Utilizing <span>Formik</span> for forms,
+        This is a homework assignment. Rewritten with hooks instead of classes,
+        TypeScript. Utilizing <span>Formik</span> for forms,
         <span> yup</span> for validation,
         <span> Styled Components</span> for styling,
         <span> Styled System</span> for theming, <span>Box</span> custom utility
